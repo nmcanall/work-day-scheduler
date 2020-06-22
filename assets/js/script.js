@@ -1,10 +1,16 @@
 var schedule = {};
 
+// Set the current day in the jumbotron
+var setCurrentDay = function() {
+    var currentDay = moment().format("dddd, MMMM Do");
+    $("#currentDay").text(currentDay);
+}
+
 // Build new time block
 var createTimeBlock = function(hour, task) {
     // Create elements that make up a time block
     var timeBlockEl = $("<li>").addClass("row time-block");
-    var hourEl = $("<p>").addClass("col-1 hour").text(hour);
+    var hourEl = $("<p>").addClass("col-1 hour").text(hour.format("hA"));
     var descriptionEl = $("<p>").addClass("col-10 description").text(task);
     var saveBtnEl = $("<span>").addClass("oi oi-browser col-1 saveBtn");
 
@@ -20,7 +26,9 @@ var createTimeBlock = function(hour, task) {
 
 // Load schedule
 var loadSchedule = function() {
-    for(var time = 0900; time <= 1700; time += 100) {
+    var startTime = moment().hour(9);
+    var endTime = moment().hour(17);
+    for(var time = startTime; time.isBefore(endTime); time.add(1, "hour")) {
         createTimeBlock(time, "event description");
     }
 }
@@ -28,11 +36,13 @@ var loadSchedule = function() {
 // Helper method to set the background color based on current time
 var setBackground = function(hour, descriptionEl) {
     // Determine past, present, or future and set background accordingly
-    // Later, this will use moment rather than a hard coded time
-    if(hour < 1100) {
+    var currentHour = parseInt(moment().hour(11).format("H"));
+    var displayHour = parseInt(hour.format("H"));
+    console.log(currentHour, displayHour);
+    if(displayHour < currentHour) {
         descriptionEl.addClass("past");
     }
-    else if(hour === 1100) {
+    else if(displayHour === currentHour) {
         descriptionEl.addClass("present");
     }
     else {
@@ -71,8 +81,11 @@ $("#list").on("click", ".description", function() {
 // });
 
 // Save task when save button is clicked
-$("#list").on("click", "span", function() {
-});
+// $("#list").on("click", "span", function() {
+// });
+
+// On start-up, set date at the top
+setCurrentDay();
 
 // On start-up, load the schedule
 loadSchedule();
