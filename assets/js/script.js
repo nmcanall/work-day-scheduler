@@ -1,4 +1,4 @@
-var schedule = {};
+var schedule = [];
 
 // Set the current day in the jumbotron
 var setCurrentDay = function() {
@@ -28,8 +28,18 @@ var createTimeBlock = function(hour, task) {
 var loadSchedule = function() {
     var startTime = moment().hour(9);
     var endTime = moment().hour(18);
-    for(var time = startTime; time.isBefore(endTime); time.add(1, "hour")) {
-        createTimeBlock(time, "");
+
+    // Create the schedule as empty if nothing is there
+    if(!schedule) {
+        for(var time = startTime; time.isBefore(endTime); time.add(1, "hour")) {
+            createTimeBlock(time, "asdf");
+        }
+    }
+
+    else {
+        for(var time = startTime; time.isBefore(endTime); time.add(1, "hour")) {
+            createTimeBlock(time, "");
+        }
     }
 }
 
@@ -79,9 +89,13 @@ $("#list").on("click", "span", function() {
     hour = moment().set("hour", hour);
 
     // Replace the textInputEl with the p tag
-    var eventP = $("<p>").addClass("col-10 description").text(textInputEl.val().trim());
+    var textInput = textInputEl.val().trim();
+    var eventP = $("<p>").addClass("col-10 description").text(textInput);
     setBackground(hour, eventP);
     textInputEl.replaceWith(eventP);
+
+    // Save schedule in local storage
+    // schedule[hour] = text;
 });
 
 // On start-up, set date at the top
